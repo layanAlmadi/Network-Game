@@ -17,24 +17,26 @@ public class Server {
     private static List<ClientHandler> playersInGame = new ArrayList<>();
 
     public static void main(String[] args) {
-    try {
-        // استدعاء المنفذ من البيئة حتى يعمل على Render
-        int port = Integer.parseInt(System.getenv().getOrDefault("PORT", "12345"));
-        ServerSocket serverSocket = new ServerSocket(port);
+        try {
+            // الحصول على المنفذ من البيئة أو استخدام 8080 كافتراضي
+            int port = Integer.parseInt(System.getenv().getOrDefault("PORT", "8080"));
+            ServerSocket serverSocket = new ServerSocket(port, 50, InetAddress.getByName("0.0.0.0"));
 
-        System.out.println("Server is running on port: " + port);
+            System.out.println("✅ Server is running on port: " + port);
 
-        while (true) {
-            Socket clientSocket = serverSocket.accept();
-            ClientHandler clientHandler = new ClientHandler(clientSocket);
-            clientHandlers.add(clientHandler);
-            
-            System.out.println("ClientHandlers in Server: " + clientHandlers.size());
+            while (true) {
+                Socket clientSocket = serverSocket.accept();
+                ClientHandler clientHandler = new ClientHandler(clientSocket);
+                clientHandlers.add(clientHandler);
 
-            new Thread(clientHandler).start();
+                System.out.println("🔗 New client connected! Total clients: " + clientHandlers.size());
+
+                new Thread(clientHandler).start();
+            }
+        } catch (IOException e) {
+            System.err.println("❌ Server error: " + e.getMessage());
+            e.printStackTrace();
         }
-    } catch (IOException e) {
-        e.printStackTrace();
     }
 }
     
