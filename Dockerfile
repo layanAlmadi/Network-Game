@@ -7,11 +7,11 @@ WORKDIR /app
 # نسخ جميع ملفات المشروع إلى الحاوية
 COPY . .
 
-# التأكد من الدخول إلى المجلد الذي يحتوي على ملفات `.java`
-WORKDIR /app/src
+# التأكد من الدخول إلى المجلد الذي يحتوي على ملفات .java
+WORKDIR /app/src/networkproject3
 
-# تجميع جميع ملفات Java
-RUN javac -d . $(find . -type f -name "*.java")
+# تجميع جميع ملفات Java داخل الحزمة الصحيحة
+RUN javac -d . *.java
 
-# تشغيل السيرفر (تأكد من اسم الحزمة الصحيح)
+# تشغيل السيرفر (تأكد من صحة اسم الحزمة والملف الرئيسي)
 CMD ["java", "networkproject3.Server"]
