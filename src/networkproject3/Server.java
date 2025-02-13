@@ -17,21 +17,26 @@ public class Server {
     private static List<ClientHandler> playersInGame = new ArrayList<>();
 
     public static void main(String[] args) {
-        try (ServerSocket serverSocket = new ServerSocket(12345)) {
-            System.out.println("Server is running...");
+    try {
+        // استدعاء المنفذ من البيئة حتى يعمل على Render
+        int port = Integer.parseInt(System.getenv().getOrDefault("PORT", "12345"));
+        ServerSocket serverSocket = new ServerSocket(port);
 
-            while (true) {
-                Socket clientSocket = serverSocket.accept();
-                ClientHandler clientHandler = new ClientHandler(clientSocket);
-                clientHandlers.add(clientHandler);
-               System.out.println("ClientHandlers in Server: " + Server.clientHandlers.size());
+        System.out.println("Server is running on port: " + port);
 
-                new Thread(clientHandler).start();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        while (true) {
+            Socket clientSocket = serverSocket.accept();
+            ClientHandler clientHandler = new ClientHandler(clientSocket);
+            clientHandlers.add(clientHandler);
+            
+            System.out.println("ClientHandlers in Server: " + clientHandlers.size());
+
+            new Thread(clientHandler).start();
         }
+    } catch (IOException e) {
+        e.printStackTrace();
     }
+}
     
    
     public static List<ClientHandler> getTopScorers() {
