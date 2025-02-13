@@ -5,11 +5,13 @@ FROM openjdk:17
 WORKDIR /app
 
 # نسخ جميع ملفات المشروع إلى الحاوية
-COPY . /app
+COPY . .
 
-# تجميع جميع ملفات Java داخل المجلد إذا كان هناك حزم (Packages)
-RUN javac -d . $(find . -name "*.java")
+# التأكد من الدخول إلى المجلد الذي يحتوي على ملفات `.java`
+WORKDIR /app/src
 
-# تشغيل التطبيق (تأكد من استخدام اسم الحزمة إذا كان `Main` داخل package)
-CMD ["java", "networkproject3.Main"]
+# تجميع جميع ملفات Java
+RUN javac -d . $(find . -type f -name "*.java")
 
+# تشغيل السيرفر (تأكد من اسم الحزمة الصحيح)
+CMD ["java", "networkproject3.Server"]
