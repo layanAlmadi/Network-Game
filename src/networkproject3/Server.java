@@ -17,28 +17,29 @@ public class Server {
     private static List<ClientHandler> playersInGame = new ArrayList<>();
 
     public static void main(String[] args) {
-        try {
-            // الحصول على المنفذ من البيئة أو استخدام 8080 كافتراضي
-            int port = Integer.parseInt(System.getenv().getOrDefault("PORT", "8080"));
-            ServerSocket serverSocket = new ServerSocket(port, 50, InetAddress.getByName("0.0.0.0"));
+    int port = Integer.parseInt(System.getenv().getOrDefault("PORT", "8080"));
 
-            System.out.println("✅ Server is running on port: " + port);
+    try (ServerSocket serverSocket = new ServerSocket(port, 50, InetAddress.getByName("0.0.0.0"))) {
+        System.out.println("✅ Server is running on port: " + port);
 
-            while (true) {
-                Socket clientSocket = serverSocket.accept();
-                ClientHandler clientHandler = new ClientHandler(clientSocket);
+        while (true) {
+            Socket clientSocket = serverSocket.accept();
+            ClientHandler clientHandler = new ClientHandler(clientSocket);
+
+            synchronized (clientHandlers) {
                 clientHandlers.add(clientHandler);
-
-                System.out.println("🔗 New client connected! Total clients: " + clientHandlers.size());
-
-                new Thread(clientHandler).start();
             }
-        } catch (IOException e) {
-            System.err.println("❌ Server error: " + e.getMessage());
-            e.printStackTrace();
+
+            System.out.println("🔗 New client connected! Total clients: " + clientHandlers.size());
+
+            new Thread(clientHandler).start();
         }
+    } catch (IOException e) {
+        System.err.println("❌ Server error: " + e.getMessage());
+        e.printStackTrace();
     }
 }
+
     
    
     public static List<ClientHandler> getTopScorers() {
